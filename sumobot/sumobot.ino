@@ -78,7 +78,8 @@ void setup() {
   Serial.println("Waiting to start...");
   do {
     getShields();
-  } while (shieldLstate || shieldRstate);
+  } while (shieldLstate && shieldRstate);
+  forward();
   delay(500); // ensure shield is not detected as hit
 }
 
@@ -98,18 +99,29 @@ void loop() {
       delay(1000);
     }
   }
+
   else  // need to get out of black area
   {
     Serial.println("Detected black");
     // reverse completely out of black
     backward();
-    while (getLdr() < ldrThreshold)
+    delay(600);
+    if (getLdr() < ldrThreshold)
     {
-      delay(50);
+      // might be going backwards into black, get out by moving forward
+      do
+      {
+        forward();
+      } while (getLdr() < ldrThreshold);
     }
+    // while (getLdr() < ldrThreshold)
+    // {
+    //   delay(50);
+    // }
     
     pivot();
-    delay(400);
+    // rotates about 90 degrees
+    delay(300);
     forward();
     //delay(200);
   }
