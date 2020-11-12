@@ -14,8 +14,8 @@ int shields[2] = {shieldRight, shieldLeft};
 
 int ldrPin = A0;
 int ldrVal;
-int ldrThreshold = 650;
-
+int ldrThreshold = 300;
+int reverseDuration = 500; // ms
 
 void getShields() {
   shieldLstate = digitalRead(shieldLeft);
@@ -94,7 +94,6 @@ void loop() {
     if (!shieldLstate || !shieldRstate) // shield hit
     {
       Serial.println("Shield hit, immobilised");
-      // stopped();
       pivot();
       delay(1000);
     }
@@ -103,15 +102,15 @@ void loop() {
   else  // need to get out of black area
   {
     Serial.println("Detected black");
-    // reverse completely out of black
     backward();
-    delay(600);
+    delay(reverseDuration);
     if (getLdr() < ldrThreshold)
     {
       // might be going backwards into black, get out by moving forward
       do
       {
         forward();
+        Serial.println("Still in black, moving forward");
       } while (getLdr() < ldrThreshold);
     }
     // while (getLdr() < ldrThreshold)
