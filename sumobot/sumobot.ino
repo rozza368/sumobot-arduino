@@ -15,14 +15,7 @@ int shields[2] = {shieldRight, shieldLeft};
 int ldrPin = A0;
 int ldrVal;
 int ldrThreshold = 300;
-int reverseDuration = 500; // ms
-
-void getShields() {
-  shieldLstate = digitalRead(shieldLeft);
-  shieldRstate = digitalRead(shieldRight);
-  //Serial.println(shieldLstate);
-  //Serial.println(shieldRstate);
-}
+int reverseDuration = 800; // ms
 
 int getLdr() {
   ldrVal = analogRead(ldrPin);
@@ -60,7 +53,15 @@ void pivot() {
   // digitalWrite(rightBack, LOW);
 }
 
+void getShields() {
+  shieldLstate = digitalRead(shieldLeft);
+  shieldRstate = digitalRead(shieldRight);
+  //Serial.println(shieldLstate);
+  //Serial.println(shieldRstate);
+}
+
 void checkHit() {
+  getShields();
   if (!shieldLstate || !shieldRstate) // shield hit
   {
     Serial.println("Shield hit, immobilised");
@@ -99,7 +100,6 @@ void loop() {
   {
     // normal operation
     forward();
-    getShields();
     checkHit();
   }
 
