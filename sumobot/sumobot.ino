@@ -60,6 +60,15 @@ void pivot() {
   // digitalWrite(rightBack, LOW);
 }
 
+void checkHit() {
+  if (!shieldLstate || !shieldRstate) // shield hit
+  {
+    Serial.println("Shield hit, immobilised");
+    pivot();
+    delay(1000);
+  }
+}
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
@@ -91,37 +100,33 @@ void loop() {
     // normal operation
     forward();
     getShields();
-    if (!shieldLstate || !shieldRstate) // shield hit
-    {
-      Serial.println("Shield hit, immobilised");
-      pivot();
-      delay(1000);
-    }
+    checkHit();
   }
 
-  else  // need to get out of black area
+  else  // black detected
   {
     Serial.println("Detected black");
-    backward();
-    delay(reverseDuration);
-    if (getLdr() < ldrThreshold)
-    {
-      // might be going backwards into black, get out by moving forward
-      do
+    while (getLdr() < ldrThreshold) {
+      backward();
+      delay(reverseDuration);
+      if (getLdr() < ldrThreshold) // still in black
       {
+        // might be going backwards into black, get out by moving forward
         forward();
-        Serial.println("Still in black, moving forward");
-      } while (getLdr() < ldrThreshold);
+        delay(500);
+      }
+      else
+      {
+        pivot();
+        // rotates about 90 degrees
+        for (int i = 0; i < 30; i++) {
+          checkHit(); // ensure shields can still be hit
+          delay(10);
+        }
+        
+        break;
+      }
     }
-    // while (getLdr() < ldrThreshold)
-    // {
-    //   delay(50);
-    // }
-    
-    pivot();
-    // rotates about 90 degrees
-    delay(300);
     forward();
-    //delay(200);
   }
 }
