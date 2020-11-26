@@ -7,15 +7,12 @@ int shieldLeft = 7;
 int shieldLstate = 0;
 int shieldRstate = 0;
 
-int started = 0;
-
 int motors[4] = {leftBack, leftFwd, rightBack, rightFwd};
-int shields[2] = {shieldRight, shieldLeft};
 
 int ldrPin = A0;
 int ldrVal;
 int ldrThreshold = 300;
-int reverseDuration = 800; // ms
+int reverseDuration = 600; // ms
 
 int getLdr() {
   ldrVal = analogRead(ldrPin);
@@ -113,7 +110,7 @@ void loop() {
       {
         // might be going backwards into black, get out by moving forward
         forward();
-        delay(500);
+        delay(1200);
       }
       else
       {
